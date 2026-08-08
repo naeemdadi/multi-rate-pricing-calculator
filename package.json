@@ -1,0 +1,40 @@
+{
+  "name": "multi-rate-pricing-calculator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "pnpm exec migrate-mongo up --file migrate-mongo-config.js",
+    "db:migrate:status": "pnpm exec migrate-mongo status --file migrate-mongo-config.js",
+    "db:migrate:down": "pnpm exec migrate-mongo down --file migrate-mongo-config.js",
+    "db:migrate:create": "pnpm exec migrate-mongo create --file migrate-mongo-config.js"
+  },
+  "dependencies": {
+    "better-auth": "^1.4.0",
+    "mongodb": "^6.9.0",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/migrate-mongo": "^10.0.6",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "^16.0.0",
+    "migrate-mongo": "^14.0.7",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
+  }
+}
