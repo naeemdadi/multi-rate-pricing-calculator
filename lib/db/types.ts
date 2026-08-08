@@ -2,19 +2,22 @@ import type { ObjectId } from "mongodb";
 
 export type DocumentStatus = "draft" | "finalized";
 
-export type DiscountType = "fixed" | "percent";
-
-export type LineItemDiscount = {
-  type: DiscountType;
-  value: number;
-};
+export type LineItemDiscountRecord =
+  | {
+      type: "fixed";
+      amountCents: number;
+    }
+  | {
+      type: "percent";
+      percentage: number;
+    };
 
 export type LineItemRecord = {
   id: string;
   description: string;
   quantity: number;
   unitPriceCents: number;
-  discount?: LineItemDiscount | null;
+  discount?: LineItemDiscountRecord | null;
   taxPercent?: number | null;
 };
 

@@ -28,7 +28,7 @@ Note:
 
 ## Phase 2: Calculation Engine
 
-Status: next
+Status: complete
 
 - Build the shared money-calculation module.
 - Implement subtotal, discount, tax, and grand-total rules.
@@ -37,7 +37,7 @@ Status: next
 
 ## Phase 3: Document Validation and REST API
 
-Status: pending
+Status: complete
 
 - Add request validation for documents and line items.
 - Implement REST endpoints for document CRUD.
@@ -47,7 +47,7 @@ Status: pending
 
 ## Phase 4: Auth UX and Protected Flows
 
-Status: pending
+Status: next
 
 - Build signup and login screens.
 - Implement logout and session-aware navigation.

@@ -81,4 +81,5 @@ mongodb://127.0.0.1:27017/multi-rate-pricing-calculator
 - Database layer types, indexes, and migration strategy are in place
 - Better Auth route, client, and session helper are in place
 - Shared calculation engine and unit tests are in place
+- Document validation and REST API routes are in place
 - Feature work will continue phase by phase
