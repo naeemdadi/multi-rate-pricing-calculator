@@ -65,7 +65,7 @@ Status: complete
 
 ## Phase 6: Reporting
 
-Status: next
+Status: complete
 
 - Implement the issue-date-range summary report.
 - Return number of documents, grand-total sum, tax sum, and discount sum.
@@ -74,7 +74,7 @@ Status: next
 
 ## Phase 7: UI and UX
 
-Status: pending
+Status: next
 
 - Build the document editor UI.
 - Build the finalize flow UI.

@@ -92,4 +92,5 @@ mongodb://127.0.0.1:27017/multi-rate-pricing-calculator
 - Document validation and REST API routes are in place
 - Sign-up, sign-in, sign-out, and protected document/report pages are in place
 - Document finalize flow and finalized-document immutability are in place
+- Issue-date summary reporting is in place via `/api/reports/summary`
 - Feature work will continue phase by phase
