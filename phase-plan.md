@@ -47,7 +47,7 @@ Status: complete
 
 ## Phase 4: Auth UX and Protected Flows
 
-Status: next
+Status: complete
 
 - Build signup and login screens.
 - Implement logout and session-aware navigation.
@@ -56,16 +56,16 @@ Status: next
 
 ## Phase 5: Document Lifecycle
 
-Status: pending
+Status: complete
 
 - Implement finalize document behavior.
 - Enforce finalized-document immutability in the API.
 - Return clear errors for invalid edit attempts.
-- Decide whether duplicate-to-draft is included as a stretch goal.
+- Duplicate-to-draft is intentionally deferred as a stretch goal.
 
 ## Phase 6: Reporting
 
-Status: pending
+Status: next
 
 - Implement the issue-date-range summary report.
 - Return number of documents, grand-total sum, tax sum, and discount sum.

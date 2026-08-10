@@ -8,6 +8,7 @@ const client = await getMongoClient();
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
+    transaction: false,
   }),
   emailAndPassword: {
     enabled: true,

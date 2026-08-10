@@ -367,3 +367,33 @@ export async function deleteLineItem(
     updatedAt,
   });
 }
+
+export async function finalizeDocument(userId: string, documentId: string) {
+  const db = await getAppDb();
+  const document = await getOwnedDocument(userId, documentId);
+
+  if (document.status === "finalized") {
+    throw new ApiError(409, "Document is already finalized");
+  }
+
+  const finalizedAt = new Date();
+  const updatedAt = finalizedAt;
+
+  await db.collection<DocumentRecord>(collections.documents).updateOne(
+    { _id: document._id, userId },
+    {
+      $set: {
+        status: "finalized",
+        finalizedAt,
+        updatedAt,
+      },
+    },
+  );
+
+  return serializeDocument({
+    ...document,
+    status: "finalized",
+    finalizedAt,
+    updatedAt,
+  });
+}

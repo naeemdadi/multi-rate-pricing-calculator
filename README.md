@@ -74,6 +74,14 @@ mongodb://127.0.0.1:27017/multi-rate-pricing-calculator
 - `pnpm db:migrate:create` scaffolds a new migration file.
 - Schema changes are tracked in code rather than through an ORM migration generator.
 
+## Lifecycle Rules
+
+- Draft documents are fully editable.
+- Finalized documents are read-only for metadata and line items.
+- Finalization is exposed through `POST /api/documents/:documentId/finalize`.
+- Invalid edit attempts against finalized documents return HTTP `409` with a clear API error.
+- Duplicate-to-draft is not implemented in the current submission and remains a documented stretch goal.
+
 ## Current status
 
 - App shell exists
@@ -82,4 +90,6 @@ mongodb://127.0.0.1:27017/multi-rate-pricing-calculator
 - Better Auth route, client, and session helper are in place
 - Shared calculation engine and unit tests are in place
 - Document validation and REST API routes are in place
+- Sign-up, sign-in, sign-out, and protected document/report pages are in place
+- Document finalize flow and finalized-document immutability are in place
 - Feature work will continue phase by phase
