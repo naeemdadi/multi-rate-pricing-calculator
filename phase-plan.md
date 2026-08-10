@@ -81,6 +81,8 @@ Status: complete
 - Build the summary report UI with date range quick presets and matching documents breakdown table.
 - Surface validation and server errors clearly next to form fields and toast alerts.
 - Added document duplication to draft and document deletion modal.
+- Implemented Printable View route (`/documents/[documentId]/print`) & HTML/PDF print output.
+
 
 
 ## Phase 8: Testing and Hardening
@@ -95,8 +97,8 @@ Status: complete
 
 ## Phase 9: Deployment and README
 
-Status: pending
+Status: complete
 
-- Deploy the app and verify the live URL.
-- Write the final README with setup, rounding policy, immutability rules, assumptions, and tradeoffs.
-- Add any final submission polish.
+- Deployed the app and documented setup instructions.
+- Wrote the final README with setup, rounding policy, sample document worked example, immutability rules, assumptions, tradeoffs, and production improvements.
+- Applied final submission polish and ran lint & test verification.

@@ -13,7 +13,7 @@ export async function AppShell({
 
   return (
     <div className="min-h-screen bg-[var(--surface)] text-[var(--foreground)]">
-      <header className="border-b border-[var(--border)] bg-[var(--surface-raised)]/90 backdrop-blur">
+      <header className="border-b border-[var(--border)] bg-[var(--surface-raised)]/90 backdrop-blur print:hidden">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <div className="flex items-center gap-8">
             <Link className="text-sm font-semibold tracking-[0.16em] text-[var(--muted)] uppercase" href="/">

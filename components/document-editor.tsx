@@ -330,6 +330,14 @@ export function DocumentEditor({ initialDocument }: DocumentEditorProps) {
           >
             ← Back
           </Link>
+          <a
+            className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-raised)]"
+            href={`/api/documents/${document.id}/export?print=true`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            🖨️ Print / PDF
+          </a>
           <button
             className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-raised)] disabled:opacity-50"
             disabled={duplicatePending}

@@ -1,17 +1,17 @@
 import { notFound } from "next/navigation";
 
-import { DocumentEditor } from "@/components/document-editor";
+import { PrintableDocument } from "@/components/printable-document";
 import { requireAuthenticatedUser } from "@/lib/auth-pages";
 import { ApiError } from "@/lib/api/errors";
 import { getDocument } from "@/lib/documents/service";
 
-type DocumentPageProps = {
+type PrintPageProps = {
   params: Promise<{
     documentId: string;
   }>;
 };
 
-export default async function DocumentPage({ params }: DocumentPageProps) {
+export default async function PrintDocumentPage({ params }: PrintPageProps) {
   const user = await requireAuthenticatedUser();
   const { documentId } = await params;
 
@@ -26,5 +26,5 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
     throw error;
   }
 
-  return <DocumentEditor initialDocument={document} />;
+  return <PrintableDocument document={document} />;
 }

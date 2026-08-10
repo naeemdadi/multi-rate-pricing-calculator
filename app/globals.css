@@ -43,3 +43,24 @@
     font: inherit;
   }
 }
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: auto;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    min-height: auto !important;
+  }
+
+  header,
+  nav,
+  aside,
+  .print\:hidden {
+    display: none !important;
+  }
+}
