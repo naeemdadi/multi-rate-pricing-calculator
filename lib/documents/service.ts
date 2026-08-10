@@ -15,6 +15,7 @@ import type {
   LineItemDiscountRecord,
   LineItemRecord,
 } from "@/lib/db/types";
+import type { SerializedDocument } from "@/lib/documents/types";
 import type {
   CreateDocumentInput,
   CreateLineItemInput,
@@ -128,7 +129,7 @@ function computePersistedValues(lineItems: LineItemRecord[]) {
   }
 }
 
-function serializeDocument(document: DocumentRecord) {
+function serializeDocument(document: DocumentRecord): SerializedDocument {
   return {
     id: document._id.toString(),
     userId: document.userId,
@@ -397,3 +398,41 @@ export async function finalizeDocument(userId: string, documentId: string) {
     updatedAt,
   });
 }
+
+export async function duplicateDocument(userId: string, documentId: string) {
+  const db = await getAppDb();
+  const sourceDocument = await getOwnedDocument(userId, documentId);
+
+  const now = new Date();
+  const nextLineItems = sourceDocument.lineItems.map((item) => ({
+    ...item,
+    id: randomUUID(),
+  }));
+
+  const { lineItems, totals } = computePersistedValues(nextLineItems);
+
+  const newDocument: Omit<DocumentRecord, "_id"> = {
+    userId,
+    title: `${sourceDocument.title} (Copy)`,
+    customer: sourceDocument.customer,
+    issueDate: now,
+    status: "draft",
+    lineItems,
+    totals,
+    finalizedAt: null,
+    duplicatedFromDocumentId: sourceDocument._id,
+    createdAt: now,
+    updatedAt: now,
+    schemaVersion: 1,
+  };
+
+  const result = await db
+    .collection<DocumentRecord>(collections.documents)
+    .insertOne(newDocument as DocumentRecord);
+
+  return serializeDocument({
+    ...newDocument,
+    _id: result.insertedId,
+  });
+}
+

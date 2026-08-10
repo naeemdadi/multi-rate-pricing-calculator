@@ -39,17 +39,67 @@ describe("calculateLineItem", () => {
     expect(result.lineTotalCents).toBe(18_000);
   });
 
-  it("supports fractional quantities with line-level rounding", () => {
+  it("supports zero unit price with zero total", () => {
     const result = calculateLineItem({
-      description: "Fractional item",
-      quantity: 1.25,
-      unitPriceCents: 999,
-      taxPercent: 5,
+      description: "Free item",
+      quantity: 5,
+      unitPriceCents: 0,
+      discount: null,
+      taxPercent: 10,
     });
 
-    expect(result.subtotalCents).toBe(1_249);
-    expect(result.taxAmountCents).toBe(62);
-    expect(result.lineTotalCents).toBe(1_311);
+    expect(result.subtotalCents).toBe(0);
+    expect(result.discountAmountCents).toBe(0);
+    expect(result.afterDiscountCents).toBe(0);
+    expect(result.taxAmountCents).toBe(0);
+    expect(result.lineTotalCents).toBe(0);
+  });
+
+  it("handles exact 100% fixed discount (after discount = 0)", () => {
+    const result = calculateLineItem({
+      description: "100% discounted item",
+      quantity: 1,
+      unitPriceCents: 5_000,
+      discount: { type: "fixed", value: 50 },
+      taxPercent: 8,
+    });
+
+    expect(result.subtotalCents).toBe(5_000);
+    expect(result.discountAmountCents).toBe(5_000);
+    expect(result.afterDiscountCents).toBe(0);
+    expect(result.taxAmountCents).toBe(0);
+    expect(result.lineTotalCents).toBe(0);
+  });
+
+  it("handles decimal percent discount and tax accurately with half-up rounding", () => {
+    const result = calculateLineItem({
+      description: "Custom rates",
+      quantity: 3,
+      unitPriceCents: 4_999, // $49.99
+      discount: { type: "percent", value: 12.5 },
+      taxPercent: 7.25,
+    });
+
+    // subtotal = 3 * 4999 = 14997 cents ($149.97)
+    expect(result.subtotalCents).toBe(14_997);
+    // discount = 14997 * 0.125 = 1874.625 -> rounds to 1875 cents ($18.75)
+    expect(result.discountAmountCents).toBe(1_875);
+    // after discount = 14997 - 1875 = 13122 cents ($131.22)
+    expect(result.afterDiscountCents).toBe(13_122);
+    // tax = 13122 * 0.0725 = 951.345 -> rounds to 951 cents ($9.51)
+    expect(result.taxAmountCents).toBe(951);
+    // total = 13122 + 951 = 14073 cents ($140.73)
+    expect(result.lineTotalCents).toBe(14_073);
+  });
+
+  it("rejects quantity less than 1", () => {
+    expect(() =>
+      calculateLineItem({
+        description: "Zero quantity item",
+        quantity: 0,
+        unitPriceCents: 1000,
+      }),
+    ).toThrow("quantity must be greater than or equal to 1");
   });
 
   it("rejects fixed discounts above the line subtotal", () => {

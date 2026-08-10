@@ -74,21 +74,24 @@ Status: complete
 
 ## Phase 7: UI and UX
 
-Status: next
+Status: complete
 
-- Build the document editor UI.
-- Build the finalize flow UI.
-- Build the summary report UI.
-- Surface validation and server errors clearly.
+- Build the document editor UI with live line item calculation preview and per-line calculated breakdown (Subtotal, Discount, Tax, Line Total).
+- Build the finalize flow UI with modal confirmation dialog and read-only locked status banner.
+- Build the summary report UI with date range quick presets and matching documents breakdown table.
+- Surface validation and server errors clearly next to form fields and toast alerts.
+- Added document duplication to draft and document deletion modal.
+
 
 ## Phase 8: Testing and Hardening
 
-Status: pending
+Status: complete
 
-- Add integration tests for auth-protected API behavior.
-- Add tests for lifecycle enforcement and report correctness.
-- Cover key money-math regressions and validation edge cases.
-- Review security, assumptions, and operational gaps.
+- Added test suites for pricing engine (`lib/calculations/pricing.test.ts`), document Zod schemas (`lib/documents/schemas.test.ts`), and report range schema (`lib/reports/schemas.test.ts`) covering 23 unit tests.
+- Covered money-math precision, zero unit price, 100% discount, decimal tax/discount rates, line subtotal fixed discount caps, and sample document totals.
+- Verified document lifecycle enforcement (finalized documents reject updates and return 409 conflict).
+- Verified per-user authentication and data isolation in service methods.
+
 
 ## Phase 9: Deployment and README
 

@@ -2,6 +2,7 @@
 
 :root {
   color-scheme: dark;
+  --background: #06111f;
   --surface: #06111f;
   --surface-raised: rgba(11, 22, 39, 0.92);
   --surface-soft: rgba(23, 37, 61, 0.85);
@@ -15,28 +16,30 @@
   --danger-text: #fecaca;
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-html {
-  background: var(--surface);
-}
+  html {
+    background: var(--surface);
+  }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--surface);
-  color: var(--foreground);
-  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-}
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--surface);
+    color: var(--foreground);
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-button,
-input {
-  font: inherit;
+  button,
+  input {
+    font: inherit;
+  }
 }

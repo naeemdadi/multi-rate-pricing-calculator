@@ -9,13 +9,17 @@ import {
   type ReportRangeInput,
 } from "@/lib/reports/schemas";
 
+import type { SerializedDocument } from "@/lib/documents/types";
+
 export type ReportSummary = {
   from: string;
   to: string;
   documentCount: number;
+  subtotalCents: number;
   grandTotalCents: number;
   totalTaxCents: number;
   totalDiscountCents: number;
+  documents: SerializedDocument[];
 };
 
 function parseDateOnlyUtc(value: string, label: string) {
@@ -69,6 +73,7 @@ export async function getReportSummary(
     .collection<DocumentRecord>(collections.documents)
     .aggregate<{
       documentCount: number;
+      subtotalCents: number;
       grandTotalCents: number;
       totalTaxCents: number;
       totalDiscountCents: number;
@@ -78,6 +83,7 @@ export async function getReportSummary(
         $group: {
           _id: null,
           documentCount: { $sum: 1 },
+          subtotalCents: { $sum: "$totals.subtotalCents" },
           grandTotalCents: { $sum: "$totals.grandTotalCents" },
           totalTaxCents: { $sum: "$totals.totalTaxCents" },
           totalDiscountCents: { $sum: "$totals.totalDiscountCents" },
@@ -87,6 +93,7 @@ export async function getReportSummary(
         $project: {
           _id: 0,
           documentCount: 1,
+          subtotalCents: 1,
           grandTotalCents: 1,
           totalTaxCents: 1,
           totalDiscountCents: 1,
@@ -95,12 +102,37 @@ export async function getReportSummary(
     ])
     .toArray();
 
+  const matchingDocs = await db
+    .collection<DocumentRecord>(collections.documents)
+    .find(match)
+    .sort({ issueDate: -1 })
+    .toArray();
+
+  const serializedDocuments: SerializedDocument[] = matchingDocs.map((doc) => ({
+    id: doc._id.toString(),
+    userId: doc.userId,
+    title: doc.title,
+    customer: doc.customer,
+    issueDate: doc.issueDate.toISOString().slice(0, 10),
+    status: doc.status,
+    lineItems: doc.lineItems,
+    totals: doc.totals,
+    finalizedAt: doc.finalizedAt?.toISOString() ?? null,
+    duplicatedFromDocumentId: doc.duplicatedFromDocumentId?.toString() ?? null,
+    createdAt: doc.createdAt.toISOString(),
+    updatedAt: doc.updatedAt.toISOString(),
+    schemaVersion: doc.schemaVersion,
+  }));
+
   return {
     from: range.from,
     to: range.to,
     documentCount: summary?.documentCount ?? 0,
+    subtotalCents: summary?.subtotalCents ?? 0,
     grandTotalCents: summary?.grandTotalCents ?? 0,
     totalTaxCents: summary?.totalTaxCents ?? 0,
     totalDiscountCents: summary?.totalDiscountCents ?? 0,
+    documents: serializedDocuments,
   };
 }
+
