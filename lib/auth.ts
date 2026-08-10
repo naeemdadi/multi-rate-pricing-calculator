@@ -13,5 +13,14 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: [process.env.BETTER_AUTH_URL ?? "http://localhost:3000"],
+  trustedOrigins: Array.from(
+    new Set(
+      [
+        process.env.BETTER_AUTH_URL,
+        process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+        "http://localhost:3000",
+      ].filter(Boolean) as string[],
+    ),
+  ),
 });
