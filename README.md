@@ -6,7 +6,7 @@ A production-grade, full-stack Next.js web application for creating quotes, prop
 
 ## Deployed Live URL & Demo
 
-- **Live App URL:** [https://multi-rate-pricing-calculator.vercel.app](https://multi-rate-pricing-calculator.vercel.app)
+- **Live App URL:** [https://multi-rate-pricing-calculator-chi.vercel.app/](https://multi-rate-pricing-calculator-chi.vercel.app/)
 - **Tech Stack:** Next.js (App Router), TypeScript, Tailwind CSS, MongoDB, Better Auth, Vitest, Zod
 
 ---
@@ -14,23 +14,27 @@ A production-grade, full-stack Next.js web application for creating quotes, prop
 ## Features & Implementation Overview
 
 ### 1. Document Management & Line Items
+
 - Create, edit, duplicate, print, and delete financial documents.
 - Per-line inputs for item description, quantity ($\ge 1$, supporting up to 3 decimal places), unit price (in integer cents), discount (fixed amount or percentage rate), and tax rate (percentage).
 - Dynamic real-time calculation preview in the editor while preserving server-side source-of-truth calculations on save.
 
 ### 2. Strict Server-Side Calculation Engine
+
 - **Integer Cents Storage:** Eliminates floating-point precision drift by storing all monetary figures as integer cents.
 - **Mixed Discount Rules:** Accepts either fixed dollar discounts or percentage discounts per line (never both simultaneously).
 - **Subtotal Cap Enforcement:** Rejects fixed discounts that exceed the line subtotal (returns a strict HTTP 400 error rather than silently clamping).
 - **Discount-Before-Tax:** Tax rates are applied to the net discounted line subtotal.
 
 ### 3. Document Lifecycle & Immutability Rules
+
 - **Draft Status (`draft`):** Fully editable (add, edit, remove line items; update metadata).
 - **Finalized Status (`finalized`):** Read-only immutable record. Any attempt to modify, add, or delete line items or update metadata via UI or REST API is rejected with **HTTP 409 Conflict** and a clear error payload.
 - **Finalize Validation:** Finalization requires at least one line item with valid quantity and price.
 - **Duplication (Stretch Goal):** Users can duplicate any document (draft or finalized) into a fresh editable draft document with a `- Copy` title suffix.
 
 ### 4. Reporting & Date-Range Summary Analytics
+
 - Filter documents by inclusive issue-date range (`from` and `to`).
 - Computes aggregate metrics across filtered documents:
   - Total Document Count
@@ -42,10 +46,12 @@ A production-grade, full-stack Next.js web application for creating quotes, prop
 - Breakdown list table of matching documents with direct navigation.
 
 ### 5. Multi-User Authentication & Data Isolation
+
 - Email + password authentication powered by Better Auth.
 - Every API endpoint and database query is strictly scoped by the authenticated user session (`userId`).
 
 ### 6. Printable View & PDF Export (Stretch Goal)
+
 - Clean, printer-optimized HTML layout at `/documents/[documentId]/print`.
 - Includes automated browser trigger (`window.print()`) for PDF generation and JSON export downloads.
 
@@ -54,6 +60,7 @@ A production-grade, full-stack Next.js web application for creating quotes, prop
 ## Calculation & Rounding Policy
 
 ### Policy Definition
+
 1. **Internal Monetary Unit:** All prices, subtotals, discount amounts, tax amounts, and totals are represented as **integer cents** (e.g., `$100.00` is stored as `10000` cents).
 2. **Line Subtotal:**
    $$\text{Line Subtotal Cents} = \text{Quantity} \times \text{Unit Price Cents}$$
@@ -77,19 +84,20 @@ A production-grade, full-stack Next.js web application for creating quotes, prop
 
 The calculation engine is verified against the sample document specified in the assignment prompt:
 
-| Line Item | Qty | Unit Price | Discount | Tax Rate | Line Subtotal | Discount Amount | Net Amount | Tax Amount | Line Total |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **WidgetA** | 2 | $100.00 | 10% | 5% | $200.00 | $20.00 | $180.00 | $9.00 | **$189.00** |
-| **WidgetB** | 1 | $50.00 | — | 5% | $50.00 | $0.00 | $50.00 | $2.50 | **$52.50** |
-| **Service fee** | 1 | $200.00 | $20.00 (Fixed) | — | $200.00 | $20.00 | $180.00 | $0.00 | **$180.00** |
+| Line Item       | Qty | Unit Price |    Discount    | Tax Rate | Line Subtotal | Discount Amount | Net Amount | Tax Amount | Line Total  |
+| :-------------- | :-: | :--------: | :------------: | :------: | :-----------: | :-------------: | :--------: | :--------: | :---------: |
+| **WidgetA**     |  2  |  $100.00   |      10%       |    5%    |    $200.00    |     $20.00      |  $180.00   |   $9.00    | **$189.00** |
+| **WidgetB**     |  1  |   $50.00   |       —        |    5%    |    $50.00     |      $0.00      |   $50.00   |   $2.50    | **$52.50**  |
+| **Service fee** |  1  |  $200.00   | $20.00 (Fixed) |    —     |    $200.00    |     $20.00      |  $180.00   |   $0.00    | **$180.00** |
 
 #### Derived Document Totals:
+
 - **Subtotal:** $\$200.00 + \$50.00 + \$200.00 = \mathbf{\$450.00}$
 - **Total Discount:** $\$20.00 + \$0.00 + \$20.00 = \mathbf{\$40.00}$
 - **Total Tax:** $\$9.00 + \$2.50 + \$0.00 = \mathbf{\$11.50}$
 - **Grand Total:** $\$189.00 + \$52.50 + \$180.00 = \mathbf{\$421.50}$ (Equal to $\$450.00 - \$40.00 + \$11.50$)
 
-*(This worked example is covered by automated unit tests in `lib/calculations/pricing.test.ts`).*
+_(This worked example is covered by automated unit tests in `lib/calculations/pricing.test.ts`)._
 
 ---
 
@@ -176,31 +184,33 @@ The calculation engine is verified against the sample document specified in the 
 
 ## API Reference
 
-| Endpoint | Method | Description | Status Codes |
-| :--- | :---: | :--- | :--- |
-| `/api/auth/*` | `POST/GET` | Sign up, sign in, sign out, and session management | 200, 400, 401 |
-| `/api/documents` | `GET` | List all documents for authenticated user | 200, 401 |
-| `/api/documents` | `POST` | Create a new draft document | 201, 400, 401 |
-| `/api/documents/:id` | `GET` | Get single document by ID | 200, 401, 404 |
-| `/api/documents/:id` | `PUT` | Update document metadata | 200, 400, 401, 404, 409 |
-| `/api/documents/:id` | `DELETE` | Delete draft or finalized document | 200, 401, 404 |
-| `/api/documents/:id/line-items` | `POST` | Add line item to draft document | 201, 400, 401, 404, 409 |
-| `/api/documents/:id/line-items/:lineId` | `PUT` | Update line item in draft document | 200, 400, 401, 404, 409 |
-| `/api/documents/:id/line-items/:lineId` | `DELETE` | Remove line item from draft document | 200, 401, 404, 409 |
-| `/api/documents/:id/finalize` | `POST` | Finalize draft document (locks edits) | 200, 400, 401, 404, 409 |
-| `/api/documents/:id/duplicate` | `POST` | Duplicate document into a new draft | 201, 401, 404 |
-| `/api/reports/summary` | `GET` | Aggregate analytics by `from` and `to` issue dates | 200, 400, 401 |
+| Endpoint                                |   Method   | Description                                        | Status Codes            |
+| :-------------------------------------- | :--------: | :------------------------------------------------- | :---------------------- |
+| `/api/auth/*`                           | `POST/GET` | Sign up, sign in, sign out, and session management | 200, 400, 401           |
+| `/api/documents`                        |   `GET`    | List all documents for authenticated user          | 200, 401                |
+| `/api/documents`                        |   `POST`   | Create a new draft document                        | 201, 400, 401           |
+| `/api/documents/:id`                    |   `GET`    | Get single document by ID                          | 200, 401, 404           |
+| `/api/documents/:id`                    |   `PUT`    | Update document metadata                           | 200, 400, 401, 404, 409 |
+| `/api/documents/:id`                    |  `DELETE`  | Delete draft or finalized document                 | 200, 401, 404           |
+| `/api/documents/:id/line-items`         |   `POST`   | Add line item to draft document                    | 201, 400, 401, 404, 409 |
+| `/api/documents/:id/line-items/:lineId` |   `PUT`    | Update line item in draft document                 | 200, 400, 401, 404, 409 |
+| `/api/documents/:id/line-items/:lineId` |  `DELETE`  | Remove line item from draft document               | 200, 401, 404, 409      |
+| `/api/documents/:id/finalize`           |   `POST`   | Finalize draft document (locks edits)              | 200, 400, 401, 404, 409 |
+| `/api/documents/:id/duplicate`          |   `POST`   | Duplicate document into a new draft                | 201, 401, 404           |
+| `/api/reports/summary`                  |   `GET`    | Aggregate analytics by `from` and `to` issue dates | 200, 400, 401           |
 
 ---
 
 ## Test Suite Execution
 
 Run the complete test suite:
+
 ```bash
 pnpm test
 ```
 
 Expected output:
+
 ```text
  ✓ lib/calculations/pricing.test.ts (9 tests)
  ✓ lib/reports/schemas.test.ts (4 tests)
