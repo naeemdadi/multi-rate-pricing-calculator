@@ -599,7 +599,7 @@ export function DocumentEditor({ initialDocument }: DocumentEditorProps) {
                         quantity: event.target.value,
                       }))
                     }
-                    step="1"
+                    step="any"
                     type="number"
                     value={lineItemDraft.quantity}
                   />
