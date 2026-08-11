@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
+
 import { AppShell } from "@/components/app-shell";
+import { TopLoadingBar } from "@/components/top-loading-bar";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,6 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className={inter.className}>
+        <Suspense fallback={null}>
+          <TopLoadingBar />
+        </Suspense>
         <AppShell>{children}</AppShell>
       </body>
     </html>
