@@ -377,6 +377,25 @@ export async function finalizeDocument(userId: string, documentId: string) {
     throw new ApiError(409, "Document is already finalized");
   }
 
+  if (document.lineItems.length === 0) {
+    throw new ApiError(400, "Cannot finalize a document with no line items");
+  }
+
+  for (const item of document.lineItems) {
+    if (item.quantity <= 0) {
+      throw new ApiError(
+        400,
+        `Line item "${item.description}" must have quantity greater than zero`,
+      );
+    }
+    if (item.unitPriceCents < 0) {
+      throw new ApiError(
+        400,
+        `Line item "${item.description}" must have non-negative unit price`,
+      );
+    }
+  }
+
   const finalizedAt = new Date();
   const updatedAt = finalizedAt;
 
