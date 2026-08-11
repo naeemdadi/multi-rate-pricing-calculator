@@ -37,14 +37,16 @@ function toExclusiveEnd(date: Date) {
 }
 
 export function getDefaultReportRange(today = new Date()): ReportRangeInput {
-  const to = today.toISOString().slice(0, 10);
-  const fromDate = new Date(today);
-  fromDate.setUTCDate(fromDate.getUTCDate() - 29);
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const day = today.getDate();
 
-  return {
-    from: fromDate.toISOString().slice(0, 10),
-    to,
-  };
+  const to = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+  const past = new Date(year, month, day - 29);
+  const from = `${past.getFullYear()}-${String(past.getMonth() + 1).padStart(2, "0")}-${String(past.getDate()).padStart(2, "0")}`;
+
+  return { from, to };
 }
 
 export function normalizeReportRange(input: ReportRangeInput): ReportRangeInput {

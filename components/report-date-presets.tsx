@@ -2,24 +2,41 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
+function formatDateString(year: number, monthZeroIndexed: number, day: number): string {
+  const yyyy = year.toString().padStart(4, "0");
+  const mm = (monthZeroIndexed + 1).toString().padStart(2, "0");
+  const dd = day.toString().padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function getPresetDates(preset: "30days" | "month" | "year" | "all") {
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const day = now.getDate();
+
+  const todayStr = formatDateString(year, month, day);
 
   if (preset === "30days") {
-    const past = new Date(now);
-    past.setDate(past.getDate() - 29);
-    return { from: past.toISOString().slice(0, 10), to: todayStr };
+    const past = new Date(year, month, day - 29);
+    return {
+      from: formatDateString(past.getFullYear(), past.getMonth(), past.getDate()),
+      to: todayStr,
+    };
   }
 
   if (preset === "month") {
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    return { from: firstDay.toISOString().slice(0, 10), to: todayStr };
+    return {
+      from: formatDateString(year, month, 1),
+      to: todayStr,
+    };
   }
 
   if (preset === "year") {
-    const firstDay = new Date(now.getFullYear(), 0, 1);
-    return { from: firstDay.toISOString().slice(0, 10), to: todayStr };
+    return {
+      from: formatDateString(year, 0, 1),
+      to: todayStr,
+    };
   }
 
   if (preset === "all") {
